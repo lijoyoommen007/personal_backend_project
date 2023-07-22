@@ -8,10 +8,16 @@ const bodyParser = require('body-parser');
 const authRoutes = require('./router/userAuth');
 const sequelize = require('./config/db_config'); // Your database connection
 const Constants = require('./const/constants');
+const rateLimit = require('express-rate-limit');
 
 dotenv.config();
-
 // Middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests, please try again later',
+});
+app.use(limiter)
 app.use(helmet());
 app.use(morgan('common'));
 app.use(cors());
